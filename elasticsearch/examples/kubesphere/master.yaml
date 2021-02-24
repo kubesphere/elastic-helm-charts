@@ -11,12 +11,12 @@ roles:
   remote_cluster_client: "false"
 
 
-esJavaOpts: "-Xmx512m -Xms512m"
+esJavaOpts: "-Xmx1g -Xms1g"
 
 resources:
   requests:
-    cpu: "512m"
-    memory: "1Gi"
+    cpu: "1000m"
+    memory: "2Gi"
   limits:
     cpu: "1000m"
     memory: "2Gi"

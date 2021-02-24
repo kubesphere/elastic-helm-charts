@@ -11,14 +11,15 @@ roles:
   remote_cluster_client: "false"
 
 
-esJavaOpts: "-Xmx512m -Xms512m"
+esJavaOpts: "-Xmx1g -Xms1g"
 
 resources:
   requests:
     cpu: 1
     memory: "2Gi"
   limits:
-    memory: "4Gi"
+    cpu: 4
+    memory: "32Gi"
 
 volumeClaimTemplate:
   accessModes: [ "ReadWriteOnce" ]
