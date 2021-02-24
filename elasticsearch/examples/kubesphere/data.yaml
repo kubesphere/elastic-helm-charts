@@ -1,0 +1,27 @@
+---
+
+clusterName: "elasticsearch"
+nodeGroup: "data"
+
+roles:
+  master: "false"
+  ingest: "true"
+  data: "true"
+  ml: "false"
+  remote_cluster_client: "false"
+
+
+esJavaOpts: "-Xmx512m -Xms512m"
+
+resources:
+  requests:
+    cpu: 1
+    memory: "2Gi"
+  limits:
+    memory: "4Gi"
+
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 30Gi

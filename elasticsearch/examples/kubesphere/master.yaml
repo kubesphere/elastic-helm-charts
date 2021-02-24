@@ -1,0 +1,23 @@
+---
+
+clusterName: "elasticsearch"
+nodeGroup: "master"
+
+roles:
+  master: "true"
+  ingest: "false"
+  data: "false"
+  ml: "false"
+  remote_cluster_client: "false"
+
+
+esJavaOpts: "-Xmx512m -Xms512m"
+
+resources:
+  requests:
+    cpu: "512m"
+    memory: "1Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
