@@ -10,21 +10,23 @@ roles:
   ml: "false"
   remote_cluster_client: "false"
 
-tolerations:
-- effect: NoSchedule
-  key: node-role.kubernetes.io/master
-  value: ''
+  #tolerations:
+  #- effect: NoSchedule
+  #  key: node-role.kubernetes.io/master
+  #  value: ''
 
 replicas: 3
 minimumMasterNodes: 2
 
-esJavaOpts: "-Xmx1g -Xms1g"
+# If you want to add heap size according to the host, you can set it to null
+esJavaOpts: "-Xmx512m -Xms512m"
 
+# default resources
 resources:
   requests:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "512m"
+    memory: "1Gi"
   limits:
-    cpu: "1000m"
+    cpu: 1
     memory: "2Gi"
 
