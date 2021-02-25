@@ -1,0 +1,32 @@
+---
+
+clusterName: "elasticsearch"
+nodeGroup: "master"
+
+roles:
+  master: "true"
+  ingest: "false"
+  data: "false"
+  ml: "false"
+  remote_cluster_client: "false"
+
+  #tolerations:
+  #- effect: NoSchedule
+  #  key: node-role.kubernetes.io/master
+  #  value: ''
+
+replicas: 3
+minimumMasterNodes: 2
+
+# If you want to add heap size according to the host, you can set it to null
+esJavaOpts: "-Xmx512m -Xms512m"
+
+# default resources
+resources:
+  requests:
+    cpu: "512m"
+    memory: "512Mi"
+  limits:
+    cpu: 1
+    memory: "1Gi"
+

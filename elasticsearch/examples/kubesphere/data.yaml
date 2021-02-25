@@ -1,0 +1,38 @@
+---
+
+clusterName: "elasticsearch"
+nodeGroup: "data"
+
+roles:
+  master: "false"
+  ingest: "true"
+  data: "true"
+  ml: "false"
+  remote_cluster_client: "false"
+
+
+esJavaOpts: null
+
+#tolerations:
+#- effect: NoSchedule
+#  key: node-role.kubernetes.io/master
+#  value: ''
+
+replicas: 3
+minimumMasterNodes: 2
+
+# It is recommended to adjust limits to max size if you have enough resources.
+resources:
+  requests:
+    cpu: "1"
+    memory: "2Gi"
+  limits:
+    cpu: "2"
+    memory: "4Gi"
+
+# It is recommended to set the storage capacity to 20Gi+
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 30Gi
