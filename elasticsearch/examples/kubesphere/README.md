@@ -23,7 +23,7 @@ $ tree .
     `-- goss.yaml
 ```
 
-##### The reference configuration
+### The reference configuration
 
 master node
 
@@ -104,7 +104,7 @@ volumeClaimTemplate:
       storage: 30Gi
 ```
 
-##### Use make 
+### Use make 
 
 Usage of `make cmdline`
 
@@ -137,13 +137,13 @@ uninstall:
 
 ```
 
-###### install
+#### install
 
 ```
 make install [-e NAMESPACE=xxx]
 ```
 
-###### patch
+#### patch
 
 Skip this step if status of the pods is healthy
 
@@ -187,14 +187,14 @@ kubectl delete pod -l  app=elasticsearch-master [-n xxx]
 kubectl delete pod -l  app=elasticsearch-data [-n xxx]
 ```
 
-###### uninstall
+#### uninstall
 
 
 ```
 make uninstall [-e NAMESPACE=xxx]
 ```
 
-##### Access to the cluster
+### Access to the cluster
 
 Convert the svc type to `NodePort`:
 
