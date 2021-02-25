@@ -189,7 +189,6 @@ kubectl delete pod -l  app=elasticsearch-data [-n xxx]
 
 #### uninstall
 
-
 ```
 make uninstall [-e NAMESPACE=xxx]
 ```
@@ -197,11 +196,13 @@ make uninstall [-e NAMESPACE=xxx]
 ### Access to the cluster
 
 Convert the svc type to `NodePort`:
+
 ```
 $ kubectl edit svc
 $ kubectl get svc 
 NAME                            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
 elasticsearch-data              NodePort    10.96.125.133   <none>        9200:30057/TCP,9300:31075/TCP   165m
+```
 
 Access to the cluster by curl
 
@@ -224,6 +225,4 @@ $ curl http://<your node ip>:30057/_cluster/health?pretty
   "task_max_waiting_in_queue_millis" : 0,
   "active_shards_percent_as_number" : 100.0
 }
-
 ```
- 
