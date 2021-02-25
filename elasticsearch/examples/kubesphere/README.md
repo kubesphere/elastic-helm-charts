@@ -90,10 +90,10 @@ esJavaOpts: null
 # Adjust the limit of the Data node according to the data size, and the memory can be up to 32GI
 resources:
   requests:
-    cpu: "1000m"
+    cpu: "1"
     memory: "2Gi"
   limits:
-    cpu: "2000m"
+    cpu: "2"
     memory: "4Gi"
 
 # PV storage should be adjusted to 20Gi+
