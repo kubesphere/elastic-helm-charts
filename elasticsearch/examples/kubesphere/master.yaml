@@ -10,6 +10,13 @@ roles:
   ml: "false"
   remote_cluster_client: "false"
 
+tolerations:
+- effect: NoSchedule
+  key: node-role.kubernetes.io/master
+  value: ''
+
+replicas: 3
+minimumMasterNodes: 2
 
 esJavaOpts: "-Xmx1g -Xms1g"
 

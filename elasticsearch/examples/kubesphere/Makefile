@@ -3,23 +3,22 @@ default: test
 include ../../../helpers/examples.mk
 
 PREFIX := elasticsearch
-NAMESPACE := default
+NAMESPACE ?= default
 TIMEOUT := 1200s
-
-#install:
-#	helm install  $(PREFIX)-master ../../ --values master.yaml -n $(NAMESPACE)
-#	helm install  $(PREFIX)-data ../../  --values data.yaml -n  $(NAMESPACE)
-#	helm upgrade --wait --timeout=$(TIMEOUT) --install --values client.yaml $(PREFIX)-client ../../
-
-install-master:
-	helm upgrade --install  $(PREFIX)-master ../../ --values master.yaml -n $(NAMESPACE) --set imageTag="7.10.2"
-
-install-data:
-	helm upgrade --install  $(PREFIX)-data ../../  --values data.yaml -n  $(NAMESPACE) --set imageTag="7.10.2"
+PATCH := $(shell cat es-patch-torlence.json)
+Tag := 7.11.1
 
 test: install goss
 
-purge:
+install:
+	helm upgrade --install  $(PREFIX)-master ../../ --values master.yaml -n $(NAMESPACE) --set imageTag="$(Tag)"
+	helm upgrade --install  $(PREFIX)-data ../../  --values data.yaml -n  $(NAMESPACE) --set imageTag="$(Tag)"
+
+
+patch: 
+	kubectl patch sts elasticsearch-master --patch  '$(PATCH)' -n  $(NAMESPACE) 
+	kubectl patch sts elasticsearch-data --patch  '$(PATCH)' -n  $(NAMESPACE)
+
+uninstall:
 	helm del $(PREFIX)-master -n  $(NAMESPACE)
 	helm del $(PREFIX)-data -n  $(NAMESPACE)
-#	helm del $(PREFIX)-client

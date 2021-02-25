@@ -11,15 +11,23 @@ roles:
   remote_cluster_client: "false"
 
 
-esJavaOpts: "-Xmx1g -Xms1g"
+esJavaOpts: null
+
+tolerations:
+- effect: NoSchedule
+  key: node-role.kubernetes.io/master
+  value: ''
+
+replicas: 3
+minimumMasterNodes: 2
 
 resources:
   requests:
-    cpu: 1
+    cpu: "1000m"
     memory: "2Gi"
   limits:
-    cpu: 4
-    memory: "32Gi"
+    cpu: "2000m"
+    memory: "4Gi"
 
 volumeClaimTemplate:
   accessModes: [ "ReadWriteOnce" ]
