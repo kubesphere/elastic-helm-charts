@@ -25,8 +25,8 @@ esJavaOpts: "-Xmx512m -Xms512m"
 resources:
   requests:
     cpu: "512m"
-    memory: "1Gi"
+    memory: "512Mi"
   limits:
     cpu: 1
-    memory: "2Gi"
+    memory: "1Gi"
 

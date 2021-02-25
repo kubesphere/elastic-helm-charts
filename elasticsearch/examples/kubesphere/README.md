@@ -47,15 +47,15 @@ tolerations:
 replicas: 3
 minimumMasterNodes: 2
 
-esJavaOpts: "-Xmx1g -Xms1g"
+esJavaOpts: "-Xmx512m -Xms512m"
 
 resources:
   requests:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "512m"
+    memory: "512Mi"
   limits:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "1"
+    memory: "1Gi"
 
 ```
 
@@ -87,7 +87,7 @@ minimumMasterNodes: 2
 # This configuration should not be modified.
 esJavaOpts: null
 
-# Adjust suitable limits  for resources
+# Adjust the limit of the Data node according to the data size, and the memory can be up to 32GI
 resources:
   requests:
     cpu: "1000m"
@@ -96,7 +96,7 @@ resources:
     cpu: "2000m"
     memory: "4Gi"
 
-# Pv storage should be adjusted to 20Gi+
+# PV storage should be adjusted to 20Gi+
 volumeClaimTemplate:
   accessModes: [ "ReadWriteOnce" ]
   resources:
@@ -189,7 +189,6 @@ kubectl delete pod -l  app=elasticsearch-data [-n xxx]
 
 #### uninstall
 
-
 ```
 make uninstall [-e NAMESPACE=xxx]
 ```
@@ -197,11 +196,13 @@ make uninstall [-e NAMESPACE=xxx]
 ### Access to the cluster
 
 Convert the svc type to `NodePort`:
+
 ```
 $ kubectl edit svc
 $ kubectl get svc 
 NAME                            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
 elasticsearch-data              NodePort    10.96.125.133   <none>        9200:30057/TCP,9300:31075/TCP   165m
+```
 
 Access to the cluster by curl
 
@@ -224,6 +225,4 @@ $ curl http://<your node ip>:30057/_cluster/health?pretty
   "task_max_waiting_in_queue_millis" : 0,
   "active_shards_percent_as_number" : 100.0
 }
-
 ```
- 
