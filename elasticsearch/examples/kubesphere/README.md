@@ -197,18 +197,16 @@ make uninstall [-e NAMESPACE=xxx]
 ### Access to the cluster
 
 Convert the svc type to `NodePort`:
-
 ```
-$ kubectl edit svc elasticsearch-master # type:NodePort
-$ kubectl get svc elasticsearch-master
-NAME                   TYPE       CLUSTER-IP   EXTERNAL-IP   PORT(S)                         AGE
-elasticsearch-master   NodePort   10.96.4.59   <none>        9200:31778/TCP,9300:31113/TCP   81m
-```
+$ kubectl edit svc
+$ kubectl get svc 
+NAME                            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
+elasticsearch-data              NodePort    10.96.125.133   <none>        9200:30057/TCP,9300:31075/TCP   165m
 
 Access to the cluster by curl
 
 ```
-$ curl http://<your node ip>:31778/_cluster/health?pretty
+$ curl http://<your node ip>:30057/_cluster/health?pretty
 {
   "cluster_name" : "elasticsearch",
   "status" : "green",
@@ -226,5 +224,6 @@ $ curl http://<your node ip>:31778/_cluster/health?pretty
   "task_max_waiting_in_queue_millis" : 0,
   "active_shards_percent_as_number" : 100.0
 }
+
 ```
  
