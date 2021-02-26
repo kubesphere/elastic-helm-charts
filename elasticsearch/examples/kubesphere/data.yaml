@@ -18,7 +18,7 @@ esJavaOpts: null
 #  key: node-role.kubernetes.io/master
 #  value: ''
 
-replicas: 3
+replicas: 2
 minimumMasterNodes: 2
 
 # It is recommended to adjust limits to max size if you have enough resources.
