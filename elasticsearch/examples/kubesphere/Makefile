@@ -3,12 +3,13 @@ default: test
 include ../../../helpers/examples.mk
 
 PREFIX := elasticsearch
+RELEASE := elasticsearch-data
 NAMESPACE ?= default
 TIMEOUT := 1200s
 PATCH := $(shell cat es-patch-torlence.json)
 Tag := 7.11.1
 
-test: install goss
+test: install patch goss
 
 install:
 	helm upgrade --install  $(PREFIX)-master ../../ --values master.yaml -n $(NAMESPACE) --set imageTag="$(Tag)"
