@@ -1,6 +1,19 @@
 ## Install Guide
 
-Add repo:
+### Table of contents
+- [Preparation](#Preparation)
+- [Usage](#Usage)
+  - [Install](#install)
+  - [Patch](#patch)
+  - [Uninstall](#uninstall)
+- [Access to the cluster](#access-to-the-cluster)
+- [The Reference Configuration](#the-reference-configuration) 
+  - [Master node](#master-node)
+  - [Data node](#data-node)
+
+### Preparation
+
+Install helm 3.0+ and add repo:
 
 ```
 $ helm repo add elastic https://helm.elastic.co
@@ -23,131 +36,48 @@ $ tree .
     `-- goss.yaml
 ```
 
-### The reference configuration
+### Usage
 
-master node
-
-```
-clusterName: "elasticsearch"
-nodeGroup: "master"
-
-roles:
-  master: "true"
-  ingest: "false"
-  data: "false"
-  ml: "false"
-  remote_cluster_client: "false"
-
-# tolerations for master node
-tolerations:
-- effect: NoSchedule
-  key: node-role.kubernetes.io/master
-  value: ''
-
-replicas: 3
-minimumMasterNodes: 2
-
-esJavaOpts: "-Xmx512m -Xms512m"
-
-resources:
-  requests:
-    cpu: "512m"
-    memory: "512Mi"
-  limits:
-    cpu: "1"
-    memory: "1Gi"
-
-```
-
-data node
-
-```
-clusterName: "elasticsearch"
-nodeGroup: "data"
-
-roles:
-  master: "false"
-  ingest: "true"
-  data: "true"
-  ml: "false"
-  remote_cluster_client: "false"
-
-
-# tolerations for data node
-tolerations:
-- effect: NoSchedule
-  key: node-role.kubernetes.io/master
-  value: ''
-
-# replicas 
-replicas: 3
-minimumMasterNodes: 2
-
-# Starting from version 7.11, Elasticsearch automatically sizes JVM heap based on a node's roles and total memory.
-# This configuration should not be modified.
-esJavaOpts: null
-
-# Adjust the limit of the Data node according to the data size, and the memory can be up to 32GI
-resources:
-  requests:
-    cpu: "1"
-    memory: "2Gi"
-  limits:
-    cpu: "2"
-    memory: "4Gi"
-
-# PV storage should be adjusted to 20Gi+
-volumeClaimTemplate:
-  accessModes: [ "ReadWriteOnce" ]
-  resources:
-    requests:
-      storage: 30Gi
-```
-
-### Use make 
-
-Usage of `make cmdline`
+We integrated the useful `make command line`, the description is as follows:
 
 ```
 default: test
-
-include ../../../helpers/examples.mk
 
 PREFIX := elasticsearch
 NAMESPACE ?= default
 TIMEOUT := 1200s
 PATCH := $(shell cat es-patch-torlence.json)
+Tag := 7.11.1
 
 # Install
 # eg.  make install -e NAMESPACE=test
 install:
-        helm upgrade --install  $(PREFIX)-master ../../ --values master.yaml -n $(NAMESPACE) --set imageTag="7.11.1"
-        helm upgrade --install  $(PREFIX)-data ../../  --values data.yaml -n  $(NAMESPACE) --set imageTag="7.11.1"
+    helm upgrade --install  $(PREFIX)-master ../../ --values master.yaml -n $(NAMESPACE) --set imageTag="$(Tag)"
+	helm upgrade --install  $(PREFIX)-data ../../  --values data.yaml -n  $(NAMESPACE) --set imageTag="$(Tag)"
 
 # Patch custom tolerences 
 patch:
-        kubectl patch sts elasticsearch-master --patch  '$(PATCH)'
-        kubectl patch sts elasticsearch-data --patch  '$(PATCH)'
+        kubectl patch sts elasticsearch-master --patch  '$(PATCH)' -n  $(NAMESPACE)
+        kubectl patch sts elasticsearch-data --patch  '$(PATCH)' -n  $(NAMESPACE)
 
 # Uninstall
 # eg: make uninstall -e NAMESPACE=test
 uninstall:
         helm del $(PREFIX)-master -n  $(NAMESPACE)
         helm del $(PREFIX)-data -n  $(NAMESPACE)
-
 ```
 
-#### install
+#### Install
 
 ```
 make install [-e NAMESPACE=xxx]
 ```
 
-#### patch
+#### Patch
 
-Skip this step if status of the pods is healthy
+Skip this step if the states of all the pods are normal.
 
-In my way, a pending status occured like below:
+In my case, pending status looks like below:
 
 ```
 $ kubectl get pods
@@ -187,7 +117,7 @@ kubectl delete pod -l  app=elasticsearch-master [-n xxx]
 kubectl delete pod -l  app=elasticsearch-data [-n xxx]
 ```
 
-#### uninstall
+#### Uninstall
 
 ```
 make uninstall [-e NAMESPACE=xxx]
@@ -225,4 +155,72 @@ $ curl http://<your node ip>:30057/_cluster/health?pretty
   "task_max_waiting_in_queue_millis" : 0,
   "active_shards_percent_as_number" : 100.0
 }
+```
+
+### The reference configuration
+
+#### Master node
+
+```
+clusterName: "elasticsearch"
+nodeGroup: "master"
+
+roles:
+  master: "true"
+  ingest: "false"
+  data: "false"
+  ml: "false"
+  remote_cluster_client: "false"
+
+replicas: 3
+minimumMasterNodes: 2
+
+esJavaOpts: "-Xmx512m -Xms512m"
+
+resources:
+  requests:
+    cpu: "512m"
+    memory: "512Mi"
+  limits:
+    cpu: "1"
+    memory: "1Gi"
+
+```
+
+#### Data node
+
+```
+clusterName: "elasticsearch"
+nodeGroup: "data"
+
+roles:
+  master: "false"
+  ingest: "true"
+  data: "true"
+  ml: "false"
+  remote_cluster_client: "false"
+
+# replicas 
+replicas: 3
+minimumMasterNodes: 2
+
+# Starting from version 7.11, Elasticsearch automatically sizes JVM heap based on a node's roles and total memory.
+# This configuration should not be modified.
+esJavaOpts: null
+
+# Adjust the limit of the Data node according to the data size, and the memory can be up to 32GI
+resources:
+  requests:
+    cpu: "1"
+    memory: "2Gi"
+  limits:
+    cpu: "2"
+    memory: "4Gi"
+
+# PV storage should be adjusted to 20Gi+
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 30Gi
 ```
