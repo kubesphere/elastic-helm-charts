@@ -43,31 +43,28 @@ We integrated the useful `make command line`, the description is as follows:
 ```
 default: test
 
-include ../../../helpers/examples.mk
-
 PREFIX := elasticsearch
-RELEASE := elasticsearch-data
 NAMESPACE ?= default
 TIMEOUT := 1200s
 PATCH := $(shell cat es-patch-torlence.json)
+Tag := 7.11.1
 
 # Install
 # eg.  make install -e NAMESPACE=test
 install:
-        helm upgrade --install  $(PREFIX)-master ../../ --values master.yaml -n $(NAMESPACE) --set imageTag="7.11.1"
-        helm upgrade --install  $(PREFIX)-data ../../  --values data.yaml -n  $(NAMESPACE) --set imageTag="7.11.1"
+    helm upgrade --install  $(PREFIX)-master ../../ --values master.yaml -n $(NAMESPACE) --set imageTag="$(Tag)"
+	helm upgrade --install  $(PREFIX)-data ../../  --values data.yaml -n  $(NAMESPACE) --set imageTag="$(Tag)"
 
 # Patch custom tolerences 
 patch:
-        kubectl patch sts elasticsearch-master --patch  '$(PATCH)'
-        kubectl patch sts elasticsearch-data --patch  '$(PATCH)'
+        kubectl patch sts elasticsearch-master --patch  '$(PATCH)' -n  $(NAMESPACE)
+        kubectl patch sts elasticsearch-data --patch  '$(PATCH)' -n  $(NAMESPACE)
 
 # Uninstall
 # eg: make uninstall -e NAMESPACE=test
 uninstall:
         helm del $(PREFIX)-master -n  $(NAMESPACE)
         helm del $(PREFIX)-data -n  $(NAMESPACE)
-
 ```
 
 #### Install
@@ -78,9 +75,9 @@ make install [-e NAMESPACE=xxx]
 
 #### Patch
 
-Skip this step if all the states of the pods are normal.
+Skip this step if the states of all the pods are normal.
 
-In my case, pending status occured like below:
+In my case, pending status looks like below:
 
 ```
 $ kubectl get pods
@@ -175,12 +172,6 @@ roles:
   ml: "false"
   remote_cluster_client: "false"
 
-# tolerations for master node
-tolerations:
-- effect: NoSchedule
-  key: node-role.kubernetes.io/master
-  value: ''
-
 replicas: 3
 minimumMasterNodes: 2
 
@@ -208,13 +199,6 @@ roles:
   data: "true"
   ml: "false"
   remote_cluster_client: "false"
-
-
-# tolerations for data node
-tolerations:
-- effect: NoSchedule
-  key: node-role.kubernetes.io/master
-  value: ''
 
 # replicas 
 replicas: 3
